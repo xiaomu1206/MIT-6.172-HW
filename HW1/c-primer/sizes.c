@@ -5,12 +5,7 @@
 #include <stdint.h>
 
 #define PRINT_TYPES(type)  \
-  printf("size of %s : %zu bytes \n", #type, sizeof(type));
-
-typedef struct {
-  int id;
-  int year;
-} Student;
+  printf("size of %s : %zu bytes \n", #type, sizeof(type))
 
 int main() {
   // Please print the sizes of the following types:
@@ -43,9 +38,6 @@ int main() {
     /* GCC/Clang 扩展 */
     PRINT_TYPES(__int128);
 
-    /* 自定义类型 */
-    PRINT_TYPES(Student);
-
   // Composite types have sizes too.
   typedef struct {
     int id;
@@ -55,13 +47,49 @@ int main() {
   student you;
   you.id = 12345;
   you.year = 4;
-
-
-  // Array declaration. Use your macro to print the size of this.
-  int x[5];
-  printf("size of %s : %zu bytes \n", "x", sizeof(x));
-  // You can just use your macro here instead: PRINT_TYPES("student", you);
   printf("size of %s : %zu bytes \n", "student", sizeof(you));
+
+    int *p_int;
+    short *p_short;
+    long *p_long;
+    char *p_char;
+    float *p_float;
+    double *p_double;
+    unsigned int *p_uint;
+    long long *p_ll;
+    uint8_t *p_u8;
+    uint16_t *p_u16;
+    uint32_t *p_u32;
+    uint64_t *p_u64;
+    uint_fast8_t *p_uf8;
+    uint_fast16_t *p_uf16;
+    uintmax_t *p_umax;
+    intmax_t *p_imax;
+    __int128 *p_i128;
+    student *p_student;
+    int x;
+    int *p_x = &x;
+
+    printf("size of int* : %zu bytes\n", sizeof(p_int));
+    printf("size of short* : %zu bytes\n", sizeof(p_short));
+    printf("size of long* : %zu bytes\n", sizeof(p_long));
+    printf("size of char* : %zu bytes\n", sizeof(p_char));
+    printf("size of float* : %zu bytes\n", sizeof(p_float));
+    printf("size of double* : %zu bytes\n", sizeof(p_double));
+    printf("size of unsigned int* : %zu bytes\n", sizeof(p_uint));
+    printf("size of long long* : %zu bytes\n", sizeof(p_ll));
+    printf("size of uint8_t* : %zu bytes\n", sizeof(p_u8));
+    printf("size of uint16_t* : %zu bytes\n", sizeof(p_u16));
+    printf("size of uint32_t* : %zu bytes\n", sizeof(p_u32));
+    printf("size of uint64_t* : %zu bytes\n", sizeof(p_u64));
+    printf("size of uint_fast8_t* : %zu bytes\n", sizeof(p_uf8));
+    printf("size of uint_fast16_t* : %zu bytes\n", sizeof(p_uf16));
+    printf("size of uintmax_t* : %zu bytes\n", sizeof(p_umax));
+    printf("size of intmax_t* : %zu bytes\n", sizeof(p_imax));
+    printf("size of __int128* : %zu bytes\n", sizeof(p_i128));
+    printf("size of student* : %zu bytes\n", sizeof(p_student));
+    printf("size of &x : %zu bytes\n", sizeof(p_x));
+    printf("size of x : %zu bytes\n", sizeof(x));
 
   return 0;
 }
