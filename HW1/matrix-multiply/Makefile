@@ -26,7 +26,7 @@ CFLAGS := -Wall -std=c99 -D_POSIX_C_SOURCE=200809L
 # (so that you can use "#ifdef DEBUG" in your code), and -O0 disables compiler
 # optimizations, so that the binary generated more directly corresponds to your
 # source code.
-CFLAGS_DEBUG := -g -DDEBUG -O0
+CFLAGS_DEBUG := -gdwarf-3 -DDEBUG -O0
 
 # In the release version, we ask for many optimizations; -O3 sets the
 # optimization level to three.  -DNDEBUG defines the NDEBUG macro,
@@ -34,13 +34,14 @@ CFLAGS_DEBUG := -g -DDEBUG -O0
 CFLAGS_RELEASE := -O3 -DNDEBUG
 
 # These flags are used to invoke Clang's address sanitizer.
-CFLAGS_ASAN := -O1 -g -fsanitize=address
+CFLAGS_ASAN := -O0 -g -fsanitize=address
 
 # These flags are applied when linking object files together into your binary.
 # If you need to link against libraries, add the appropriate flags here.  By
 # default, your code is linked against the "rt" library with the flag -lrt;
 # this library is used by the timing code in the testbed.
-LDFLAGS := -lrt -flto -fuse-ld=gold
+LDFLAGS := -lrt 
+#-flto -fuse-ld=gold
 
 ################################################################################
 # You probably won't need to change anything below this line, but if you're
