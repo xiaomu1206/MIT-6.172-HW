@@ -282,7 +282,7 @@ static void bitarray_rotate_left_optimize2(bitarray_t* const bitarray,
 
   for (size_t i = 0; i < gcd; i++) {
     size_t current = i;
-    uint8_t temp = bitarray_get(bitarray, start + current);
+    bool temp = bitarray_get(bitarray, start + current);
 
     for (int j = 0; j < cycle_length - 1; j++) {
       size_t next = (current + bit_left_amount) % bit_length;
