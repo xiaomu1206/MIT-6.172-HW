@@ -50,6 +50,21 @@ struct bitarray {
 
 // ******************** Prototypes for static functions *********************
 
+static void bitarray_rotate_left_optimize3(bitarray_t* const bitarray,
+                                     const size_t bit_offset,
+                                     const size_t bit_length,
+                                    const size_t bit_left_amount);
+
+static void bitarray_rotate_left_optimize2(bitarray_t* const bitarray,
+                                     const size_t bit_offset,
+                                     const size_t bit_length,
+                                    const size_t bit_left_amount);
+
+static void bitarray_rotate_left_optimize1(bitarray_t* const bitarray,
+                                     const size_t bit_offset,
+                                     const size_t bit_length,
+                                    const size_t bit_left_amount);
+
 // Rotates a subarray left by an arbitrary number of bits.
 //
 // bit_offset is the index of the start of the subarray
@@ -193,10 +208,121 @@ void bitarray_rotate(bitarray_t* const bitarray,
 
   // Convert a rotate left or right to a left rotate only, and eliminate
   // multiple full rotations.
-  bitarray_rotate_left(bitarray, bit_offset, bit_length,
-                       modulo(-bit_right_amount, bit_length));
+
+  /* optimize3 */
+  bitarray_rotate_left_optimize3(bitarray, bit_offset, bit_length,
+                                modulo(-bit_right_amount, bit_length));
+
+  /* optimize2 */
+  // bitarray_rotate_left_optimize2(bitarray, bit_offset, bit_length,
+  //                               modulo(-bit_right_amount, bit_length));
+
+  /* optimize 1 */
+  //bitarray_rotate_left_optimize1(bitarray, bit_offset, bit_length,
+  //                              modulo(-bit_right_amount, bit_length));
+
+  /* origin */
+  // bitarray_rotate_left(bitarray, bit_offset, bit_length,
+  //                       modulo(-bit_right_amount, bit_length));
 }
 
+/* optimize 3 */
+/* Tier 39 */
+static void bitarray_rotate_left_optimize3(bitarray_t* const bitarray,
+                                     const size_t bit_offset,
+                                     const size_t bit_length,
+                                    const size_t bit_left_amount) {
+  size_t start = bit_offset;
+  size_t end = bit_offset + bit_length;
+
+  size_t n = bit_left_amount;
+  size_t k = bit_length - bit_left_amount;
+
+  // Reverse the first n bits
+  for (size_t i = 0; i < n / 2; i++) {
+    bool temp = bitarray_get(bitarray, start + i);
+    bitarray_set(bitarray, start + i, bitarray_get(bitarray, start + n - i - 1));
+    bitarray_set(bitarray, start + n - i - 1, temp);
+  }
+
+  // Reverse the remaining k bits
+  for (size_t i = 0; i < k / 2; i++) {
+    bool temp = bitarray_get(bitarray, start + n + i);
+    bitarray_set(bitarray, start + n + i, bitarray_get(bitarray, end - i - 1));
+    bitarray_set(bitarray, end - i - 1, temp);
+  }
+
+  // Reverse the entire array
+  for (size_t i = 0; i < bit_length / 2; i++) {
+    bool temp = bitarray_get(bitarray, start + i);
+    bitarray_set(bitarray, start + i, bitarray_get(bitarray, end - i - 1));
+    bitarray_set(bitarray, end - i - 1, temp);
+  }
+}
+
+/* ======================= optimize2 ======================*/
+/* Tier 37 */
+static void bitarray_rotate_left_optimize2(bitarray_t* const bitarray,
+                                     const size_t bit_offset,
+                                     const size_t bit_length,
+                                    const size_t bit_left_amount) {
+  size_t start = bit_offset;
+  size_t end = bit_offset + bit_length;
+
+  /* gcd */
+  size_t a = bit_length, b = bit_left_amount;
+  while(b--) {
+    size_t temp = b;
+    b = a % b;
+    a = temp;
+  }
+
+  size_t gcd = a;
+  size_t cycle_length = bit_length / gcd;
+
+  for (size_t i = 0; i < gcd; i++) {
+    size_t current = i;
+    uint8_t temp = bitarray_get(bitarray, start + current);
+
+    for (int j = 0; j < cycle_length - 1; j++) {
+      size_t next = (current + bit_left_amount) % bit_length;
+
+      bitarray_set(bitarray, start + current,
+                   bitarray_get(bitarray, start + next));
+      current = next;
+    }
+    bitarray_set(bitarray, start + current, temp);
+  }
+}
+
+/* ======================= optimize1 ======================*/
+/* Tier 38 */
+static void bitarray_rotate_left_optimize1(bitarray_t* const bitarray,
+                                     const size_t bit_offset,
+                                     const size_t bit_length,
+                                    const size_t bit_left_amount) {
+  int flag = bit_left_amount;
+  size_t start = bit_offset;
+  size_t end = bit_offset + bit_length;
+  bitarray_t *tmpbit = bitarray_new(flag);
+
+  for (size_t i = 0; i < flag; i++) {
+    bitarray_set(tmpbit, i, bitarray_get(bitarray, start + i));
+  }
+
+  for (size_t i = 0; i < bit_length - flag; i++) {
+    bitarray_set(bitarray, start + i, bitarray_get(bitarray, start + flag + i));
+  }
+
+  for (size_t i = 0; i < flag; i++) {
+    bitarray_set(bitarray, end - flag + i, bitarray_get(tmpbit, i));
+  }
+
+  bitarray_free(tmpbit);
+}
+
+/* ========================= origin ========================*/                                
+/* Tier 19 */
 static void bitarray_rotate_left(bitarray_t* const bitarray,
                                  const size_t bit_offset,
                                  const size_t bit_length,
@@ -230,4 +356,4 @@ static size_t modulo(const ssize_t n, const size_t m) {
 static char bitmask(const size_t bit_index) {
   return 1 << (bit_index % 8);
 }
-
+/* ========================= origin ========================*/   
